@@ -70,9 +70,11 @@ class StudentsController
         $studentData = $this->repository->find((int) $_GET['id']);
         return $this->twig->render('students_form.html.twig',
             [
-                'first_name' => $studentData['firstName'], //и сюда
-                'last_name' => $studentData['lastName'],
-                'email' => $studentData['email'],
+                'first_name' => $studentData->getFirstName(),
+                'last_name' => $studentData->getLastName(),
+                'email' => $studentData->getEmail(),
+                'phone' => $studentData->getPhone(),
+                'id_dep' => $studentData->getIdDep(),
             ]
         );
     }
@@ -81,7 +83,9 @@ class StudentsController
     {
         if (isset($_POST['id'])) {
             $id = (int) $_POST['id'];
-            $this->repository->remove(['id' => $id]);
+            $studentData = new StudentEntity();
+            $studentData->setIdStud($id);
+            $this->repository->remove($studentData);
             return $this->indexAction();
         }
         return $this->twig->render('students_delete.html.twig', array('student_id' => $_GET['id']));

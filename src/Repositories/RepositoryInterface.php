@@ -20,17 +20,17 @@ interface RepositoryInterface
 
     /**
      * Update exist entity data in the DB
-     * @param array $entityData
+     * @param class $entityData
      * @return mixed
      */
-    public function update(array $entityData);
+    public function update($entityData);
 
     /**
      * Delete entity data from the DB
-     * @param array $entityData
+     * @param class $entityData
      * @return mixed
      */
-    public function remove(array $entityData);
+    public function remove($entityData);
     /**
      * Search entity data in the DB by Id
      * @param $id
