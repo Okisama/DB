@@ -16,7 +16,7 @@ class StudentsRepository implements RepositoryInterface
         $this->connector = $connector;
     }
 
-    public function findAll($limit = 1000, $offset = 0)
+    public function findAll($limit = 100, $offset = 0)
     {
         $statement = $this->connector->getPdo()->prepare('SELECT * FROM students LIMIT :limit OFFSET :offset');
         $statement->bindValue(':limit', (int) $limit, \PDO::PARAM_INT);
@@ -34,6 +34,7 @@ class StudentsRepository implements RepositoryInterface
                 'firstName' => $result['first_name'],
                 'lastName' => $result['last_name'],
                 'email' => $result['email'],
+                'phone' => $results['phone'],
             ];
         }
 
@@ -64,7 +65,7 @@ class StudentsRepository implements RepositoryInterface
 
     }
 
-    public function update(array $studentData)
+    public function update($studentData)
     {
         $statement = $this->connector->getPdo()->prepare("
         UPDATE students 
@@ -85,11 +86,11 @@ class StudentsRepository implements RepositoryInterface
         return $statement->execute();
     }
 
-    public function remove(array $studentData)
+    public function remove($studentData)
     {
-        $statement = $this->connector->getPdo()->prepare("DELETE FROM students WHERE id = :id");
+        $statement = $this->connector->getPdo()->prepare("DELETE FROM students WHERE id_stud = :id");
 
-        $statement->bindValue(':id', $studentData['id'], \PDO::PARAM_INT);
+        $statement->bindValue(':id', $studentData->getIdStud(), \PDO::PARAM_INT);
 
         return $statement->execute();
     }
