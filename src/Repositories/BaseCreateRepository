@@ -1,0 +1,176 @@
+<?php
+
+namespace Repositories;
+
+class BaseCreateRepository
+{
+
+    private $connector;
+
+
+    public function __construct($connector)
+    {
+        $this->connector = $connector;
+    }
+
+    private function createUniversityTable()
+    {
+        /** @noinspection PhpUnusedLocalVariableInspection */
+        $pdo = $this->connector->getPdo()->execute('
+        CREATE TABLE University (
+        id_Name varchar(30) NOT NULL,
+        Town varchar(30) NOT NULL,
+        Site varchar(30) NOT NULL,
+        
+        PRIMARY KEY (Name)     );
+        ');
+
+    }
+
+    private function createDepartmentTable()
+    {
+        /** @noinspection PhpUnusedLocalVariableInspection */
+        $pdo = $this->connector->getPdo()->execute('
+        CREATE TABLE Department (
+        id_Dep int    NOT NULL auto_increment PRIMARY KEY,
+        DepName VARCHAR (30) NOT NULL ,
+        UniresityName VARCHAR (30),
+        FOREIGN KEY (UniresityName) REFERENCES University(id_Name));
+        ');
+    }
+
+    private function createStudentsTable()
+    {
+        /** @noinspection PhpUnusedLocalVariableInspection */
+        $pdo = $this->connector->getPdo()->execute('
+        CREATE TABLE Students (
+        FirstName VARCHAR (20) NOT NULL ,
+        LastName  VARCHAR (20) NOT NULL ,
+        Email  VARCHAR (30) NOT NULL ,
+        Phone VARCHAR (10) NOT NULL ,
+        id_Dep INT NOT NULL ,
+        id_Stud int NOT NULL auto_increment PRIMARY KEY,
+        FOREIGN KEY (id_Dep) REFERENCES Department(id_Dep));
+        ');
+    }
+
+    private function fillUniversity()
+    {
+        /** @noinspection PhpUnusedLocalVariableInspection */
+        $pdo = $this->connector->getPdo()->prepare('
+        INSERT INTO University SET 
+        id_Name = :id_name,
+        Town = :town,
+        Site = :site;
+        ');
+        $pdo->bindValue(':id_name', 'GeekHub');
+        $pdo->bindValue(':town', 'Cherkassy');
+        $pdo->bindValue(':site', 'geekhub.ck.ua');
+        $pdo->execute();
+    }
+
+    private function fillDepartments()
+    {
+        /** @noinspection PhpUnusedLocalVariableInspection */
+        $pdo = $this->connector->getPdo()->prepare('
+        INSERT INTO Department SET
+        DepName = :depname,
+        UniversityName = :uname;
+        ');
+        $pdo->bindValue(':depname', 'FrontEnd+CMS');
+        $pdo->bindValue(':uname', 'GeekHub');
+        $pdo->execute();
+
+        $pdo = $this->connector->getPdo()->prepare('
+        INSERT INTO Department SET
+        DepName = :depname,
+        UniversityName = :uname;
+        ');
+        $pdo->bindValue(':depname', 'Java for web');
+        $pdo->bindValue(':uname', 'GeekHub');
+        $pdo->execute();
+
+        $pdo = $this->connector->getPdo()->prepare('
+        INSERT INTO Department SET
+        DepName = :depname,
+        UniversityName = :uname;
+        ');
+        $pdo->bindValue(':depname', 'Advanced PHP');
+        $pdo->bindValue(':uname', 'GeekHub');
+        $pdo->execute();
+    }
+
+    private function fillStudents()
+    {
+        $faker = Faker\Factory::create();
+        for ($i = 1; $i <= 10; $i++) {
+            $firstname = $faker->firstName;
+            $lastname = $faker->lastname;
+            $phone = $faker->tollFreePhoneNumber ;
+            $email = $faker->email;
+            $pdo = $this->connector->getPdo()->prepare('
+            INSERT INTO Students SET
+            FirstName = :firstname,
+            LastName  = :lastname,
+            Email  = :email,
+            Phone = :phone,
+            id_Dep = :iddep;
+            ');
+            $pdo->bindValue(':firstname', $firstname);
+            $pdo->bindValue(':lastname', $lastname);
+            $pdo->bindValue(':email', $email);
+            $pdo->bindValue(':iddep', 0);
+            $pdo->execute();
+        }
+        for ($i = 1; $i <= 10; $i++) {
+            $firstname = $faker->firstName;
+            $lastname = $faker->lastname;
+            $phone = $faker->tollFreePhoneNumber ;
+            $email = $faker->email;
+            $pdo = $this->connector->getPdo()->prepare('
+            INSERT INTO Students SET
+            FirstName = :firstname,
+            LastName  = :lastname,
+            Email  = :email,
+            Phone = :phone,
+            id_Dep = :iddep;
+            ');
+            $pdo->bindValue(':firstname', $firstname);
+            $pdo->bindValue(':lastname', $lastname);
+            $pdo->bindValue(':email', $email);
+            $pdo->bindValue(':iddep', 1);
+            $pdo->execute();
+        }
+        for ($i = 1; $i <= 10; $i++) {
+            $firstname = $faker->firstName;
+            $lastname = $faker->lastname;
+            $phone = $faker->tollFreePhoneNumber ;
+            $email = $faker->email;
+            $pdo = $this->connector->getPdo()->prepare('
+            INSERT INTO Students SET
+            FirstName = :firstname,
+            LastName  = :lastname,
+            Email  = :email,
+            Phone = :phone,
+            id_Dep = :iddep;
+            ');
+            $pdo->bindValue(':firstname', $firstname);
+            $pdo->bindValue(':lastname', $lastname);
+            $pdo->bindValue(':email', $email);
+            $pdo->bindValue(':iddep', 2);
+            $pdo->execute();
+        }
+    }
+
+    public function init()
+    {
+        $this->createUniversityTable();
+        $this->createDepartmentTable();
+        $this->createStudentsTable();
+        $this->fillUniversity();
+        $this->fillDepartments();
+        $this->fillStudents();
+    }
+
+}
+
